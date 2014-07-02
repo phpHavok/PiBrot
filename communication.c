@@ -5,6 +5,7 @@
 #include <mpi.h>
 #include "fractal.h"
 #include "communication.h"
+#include "exit_menu_gl.h"
 
 #define WORKTAG 1
 #define DIETAG 2
@@ -101,7 +102,7 @@ int slave_recv_and_unpack(WORK_DATA *work, char *pack_buffer, int buffer_size)
     return tag;
 }
 
-void master(FRAC_INFO *frac_left, FRAC_INFO *frac_right, STATE_T *ogl_state)
+void master(render_t *render_state, FRAC_INFO *frac_left, FRAC_INFO *frac_right, texture_t *texture_state)
 {
     int ntasks, dest, side;
     WORK_DATA work_send;
@@ -178,7 +179,23 @@ void master(FRAC_INFO *frac_left, FRAC_INFO *frac_right, STATE_T *ogl_state)
 	}
 
         // Update texture with recieved buffer
-        update_fractal_rows(ogl_state, side, work_recv.start_row, work_recv.num_rows, work_recv.pixels);
+        update_fractal_rows(texture_state, side, work_recv.start_row, work_recv.num_rows, work_recv.pixels);
+
+        // Check user input
+        check_user_input(texture_state->gl_state);
+        // Kill if needed
+        if(window_should_close(texture_state->gl_state)) {
+            for(dest=1; dest<ntasks; dest++)
+                MPI_Send(0,0,MPI_INT,dest,DIETAG,MPI_COMM_WORLD);
+            break;
+        }
+
+        // Render exit menu
+        if(render_state->quit_mode)
+            render_exit_menu(render_state->exit_menu_state, render_state->mouse_x, render_state->mouse_y);
+
+        // Swap buffers
+        swap_ogl(texture_state->gl_state);
 
         // Get more work
         work_send.rank = work_recv.rank;
@@ -191,7 +208,6 @@ void master(FRAC_INFO *frac_left, FRAC_INFO *frac_right, STATE_T *ogl_state)
             MPI_Send(0,0,MPI_INT,work_send.rank,DIETAG,MPI_COMM_WORLD);
 	    num_ranks_complete++;
         }
-
     }
 
     free(buffer);
