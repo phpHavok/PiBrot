@@ -44,7 +44,8 @@ typedef struct gl_t {
     EGLContext context;
 
     int controller_1_fd;
-    int controller_2_fd;;
+    int controller_2_fd;
+    int controller_3_fd;
 
     void *user_pointer; // mimics GLFW user pointer
 

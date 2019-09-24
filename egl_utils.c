@@ -76,6 +76,7 @@ void init_ogl(gl_t *state, render_t *render_state)
     memset(state, 0, sizeof(gl_t));
     state->controller_1_fd = -1;
     state->controller_2_fd = -1;
+    state->controller_3_fd = -1;
     state->window_should_close = false;
 
     // Set a user pointer up
@@ -170,8 +171,9 @@ void init_ogl(gl_t *state, render_t *render_state)
     assert(EGL_FALSE != result);
 
     // Open input event
-    state->controller_1_fd = open("/dev/input/event1",O_RDONLY|O_NONBLOCK);
-    state->controller_2_fd = open("/dev/input/event2",O_RDONLY|O_NONBLOCK);
+    state->controller_1_fd = open("/dev/input/event0",O_RDONLY|O_NONBLOCK);
+    state->controller_2_fd = open("/dev/input/event1",O_RDONLY|O_NONBLOCK);
+    state->controller_3_fd = open("/dev/input/event2",O_RDONLY|O_NONBLOCK);
 }
 
 void swap_ogl(gl_t *state)
@@ -191,6 +193,7 @@ void exit_ogl(gl_t *state)
    eglDestroyContext( state->display, state->context );
    eglTerminate( state->display );
 
+   close(state->controller_3_fd);
    close(state->controller_2_fd);
    close(state->controller_1_fd);
 
@@ -325,6 +328,8 @@ void check_user_input(gl_t *state)
         process_controller_events(state, state->controller_1_fd);
     if(state->controller_2_fd > 0)
         process_controller_events(state, state->controller_2_fd);
+    if(state->controller_3_fd > 0)
+        process_controller_events(state, state->controller_3_fd);
 }
 
 // Convert pixel coordinates, lower left origin, to gl coordinates, center origin
