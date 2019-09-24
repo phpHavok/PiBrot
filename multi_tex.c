@@ -210,7 +210,7 @@ void create_shaders(texture_t *state)
     // Compile vertex shader
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     #ifdef RASPI
-        compile_shader(vertex_shader, "PiBrot/shaders/texture_es.vert");
+        compile_shader(vertex_shader, "shaders/texture_es.vert");
     #else
         compile_shader(vertex_shader, "shaders/texture.vert");
     #endif
@@ -218,7 +218,7 @@ void create_shaders(texture_t *state)
     // Compile fragment shader
     GLuint frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
     #ifdef RASPI
-        compile_shader(frag_shader, "PiBrot/shaders/texture_es.frag");
+        compile_shader(frag_shader, "shaders/texture_es.frag");
     #else
         compile_shader(frag_shader, "shaders/texture.frag");
     #endif

@@ -46,8 +46,8 @@ void init_start_menu(start_menu_t *state, gl_t *gl_state)
     #ifdef RASPI
     init_image(state->start_state,
                gl_state,
-               "PiBrot/images/start.png",
-               "PiBrot/images/start-selected.png",
+               "images/start.png",
+               "images/start-selected.png",
                lower_left_x, lower_left_y,
                image_width, image_height);
     #else
@@ -64,7 +64,7 @@ void init_start_menu(start_menu_t *state, gl_t *gl_state)
     int cursor_width = 120;
     int cursor_height = 160;
     #ifdef RASPI
-    init_cursor(state->cursor_state, gl_state, "PiBrot/images/cursor.png", cursor_width, cursor_height);
+    init_cursor(state->cursor_state, gl_state, "images/cursor.png", cursor_width, cursor_height);
     #else
     init_cursor(state->cursor_state, gl_state, "images/cursor.png", cursor_width, cursor_height); 
     #endif
